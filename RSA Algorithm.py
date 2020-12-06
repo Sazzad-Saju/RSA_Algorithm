@@ -26,29 +26,31 @@ def PowMod(b, e, m):
             result *= mod_ex(b, i, m)
     return result % m
 
-def Encrypt(message, modulo, exponent):
+def Encrypt(message, modulo, e):
     cytxt = ""
-    w = modulo // 256
-    letter = 0
-    while (w != 0):
-        w = w // 256
-        letter += 1
-    cyln = pow(256, letter)
+    temp = modulo // 256
+    per_char = 0
+    while (temp != 0):
+        temp = temp // 256
+        per_char += 1
+    cyln = pow(256, per_char)
     cyln = len(str(cyln)) + 1
     s = message
-    for i in range(0, len(message), +letter):
-        s1 = s[:letter]
-        Con = ConvertToInt(s1)
-        cytxt1 = str(PowMod(Con, exponent, modulo))
+    for i in range(0, len(message), +per_char):
+        s1 = s[:per_char]
+        b = ConvertToInt(s1)
+        cytxt1 = str(PowMod(b, e, modulo))
         if (len(cytxt1) < cyln):
             while ((cyln - len(cytxt1) > 0)):
-                zr = "0"
-                cytxt1 = zr + cytxt1
+                cytxt1 = "0" + cytxt1
             cytxt += cytxt1
         else:
             cytxt += cytxt1
-        s = s[letter:]
-    return cytxt
+        s = s[per_char:]
+    to_i = int(cytxt)
+    to_h = '%X' % to_i
+    hex_cytxt = str(to_h)
+    return hex_cytxt
 
 def eea(a, b):
     if (a % b == 0):
@@ -58,41 +60,45 @@ def eea(a, b):
         s = s - ((a // b) * t)
         return (gcd, t, s)
 
-def InvertModulo(e, r):
-    gcd, s, _ = eea(e, r)
+def InvertModulo(e, phi):
+    gcd, s, _ = eea(e, phi)
     if (gcd != 1):
         return None
     else:
-        return s % r
+        return s % phi
 
-def ConvertToStr(m):
+def ConvertToStr(num):
     st = ""
-    while (m != 0):
-        temp = m % 256
+    while (num != 0):
+        temp = num % 256
         st += chr(temp)
         chr(temp)
-        m = m - temp
-        m = m // 256
+        num = num - temp
+        num = num // 256
     st = st[::-1]
     return st
 
-def Decrypt(ciphertext, p, q, exponent):
+def Decrypt(ciphertext, p, q, e):
+    to_i = int(ciphertext, 16)
+    ciphertext = str(to_i)
     modulo = p * q
-    n = (p - 1) * (q - 1)
-    d = InvertModulo(exponent, n)
-    w = modulo // 256
-    letter = 0
-    while (w != 0):
-        w = w // 256
-        letter += 1
-    cyln = pow(256, letter)
+    phi = (p - 1) * (q - 1)
+    d = InvertModulo(e, phi)
+    temp = modulo // 256
+    per_char = 0
+    while (temp != 0):
+        temp = temp // 256
+        per_char += 1
+    cyln = pow(256, per_char)
     cyln = len(str(cyln)) + 1
+    while (len(ciphertext) % cyln != 0):
+        ciphertext = "0" + ciphertext
     s = ciphertext
     m = ""
     for i in range(0, len(ciphertext), +cyln):
         s1 = s[:cyln]
-        Con = int(s1)
-        m += ConvertToStr(PowMod(Con, d, modulo))
+        b = int(s1)
+        m += ConvertToStr(PowMod(b, d, modulo))
         s = s[cyln:]
     return m
 
@@ -101,7 +107,8 @@ p = 57704576143051
 q = 838744063
 e = 2237
 modulo = p * q
-ciphertext = Encrypt("Down the Rabbit-Hole", modulo, e)
+Message = "Down the-rabbit hole"
+ciphertext = Encrypt(Message, modulo, e)
 print(ciphertext)
 message = Decrypt(ciphertext, p, q, e)
 print(message)
