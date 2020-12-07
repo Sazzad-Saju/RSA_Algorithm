@@ -3,8 +3,9 @@
 
 <p align = "center">
 <img src = "images/RSA.png" width = "200"> <br> 
-<a href="#Introduction">Introduction •  </a><a href="#key-generation">Key Generator</a> • <a href="#encryption">Encryption</a> • <a href="#decryption">Decryption</a>
+<a href="#Introduction">Introduction</a> • <a href="#key-generator">Key Generator</a> • <a href="#Encryption">Encryption</a> • <a href="#Decryption">Decryption</a> •
 </p>
+
 
 ---
 Introduction
