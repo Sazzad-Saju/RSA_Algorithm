@@ -1,3 +1,13 @@
+# RSA Algorithm
+# By Sazzad Saju
+# CSE, HSTU
+#
+# Description: KeyGenerator program creates public_key (n,e) and
+# private_key (p,q). This RSA program will work for small primes
+# to big primes and generate encrypted string in HEX. Symmetric-
+# key should be encrypted using RSA before transmiting on online.
+import pyperclip
+
 def ConvertToInt(message):
     grd = 1
     num = 0
@@ -78,10 +88,13 @@ def ConvertToStr(num):
     st = st[::-1]
     return st
 
-def Decrypt(ciphertext, p, q, e):
+def Decrypt(ciphertext,modulo, e):
+    with open('private_key', 'r') as f:
+        p = f.readline()
+        p = int(p[:-1])
+        q = int(f.readline())
     to_i = int(ciphertext, 16)
     ciphertext = str(to_i)
-    modulo = p * q
     phi = (p - 1) * (q - 1)
     d = InvertModulo(e, phi)
     temp = modulo // 256
@@ -103,12 +116,20 @@ def Decrypt(ciphertext, p, q, e):
     return m
 
 
-p = 57704576143051
-q = 838744063
-e = 2237
-modulo = p * q
-Message = "Down the-rabbit hole"
-ciphertext = Encrypt(Message, modulo, e)
-print(ciphertext)
-message = Decrypt(ciphertext, p, q, e)
-print(message)
+with open('public_key','r') as f:
+    modulo = f.readline()
+    modulo = int(modulo[:-1])
+    e = int(f.readline())
+print("1) Encryption\n2) Decryption\n")
+indicator = input("Enter Your Choice: ")
+if(indicator=="1"):
+    Message = input("Enter Message: ")
+    ciphertext = Encrypt(Message, modulo, e)
+    print("Ciphertext: {}".format(ciphertext))
+    pyperclip.copy(ciphertext)
+    spam = pyperclip.paste()
+    print("Ciphertext is copped to clipboard!")
+elif(indicator == "2"):
+    ciphertext = input("Enter Ciphertext: ")
+    message = Decrypt(ciphertext, modulo, e)
+    print("Message: {}".format(message))
