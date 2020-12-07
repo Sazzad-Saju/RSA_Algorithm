@@ -24,7 +24,7 @@ Two files- public_key and private_key are created. Public_key would contain ‘m
 
 
 ---
-Encryption
+:lock:Encryption
 ---
 
 Encryption function takes three parameters. Here, <p align = "center">
@@ -44,23 +44,79 @@ M3 = __le__ <br>
 </p>
 
 Each part convert to int. Here,<p align = "center">
-b1 = __1262410606558359086381__ <br>
-b2 = __2109946103777344907375__ <br>
-b3 = __27749__ <br>
+M1 = __1262410606558359086381__ <br>
+M2 = __2109946103777344907375__ <br>
+M3 = __27749__ <br>
   </p>
   
   > Convert to int: "Down the-" = "-eht nwoD" =  45 x 2560 + 101 x 2561 + 104 x 2562 + 116 x 2563 + 32 x 2564 + 110 x 2565 + 119 x 2566 + 111 x 2567 + 68 x 2568 = 1262410606558359086381
   
 Ciphertext is produced by PowMod() function. Each part contains 23 characters. If less than 23, convert to string and add “0” in the beginning of each part. <br>
-* C1 = b1<sup>e</sup> mod modulo = 1262410606558359086381<sup>2237</sup> mod 48399370647915464956213 = __17004190389571278372483__ <br>
-* C2 = b2<sup>e</sup> mod modulo = 2109946103777344907375<sup>2237</sup> mod 48399370647915464956213 = __46911152036783136438187__ <br>
-* C3 = b3<sup>e</sup> mod modulo = 27749<sup>2237</sup> mod 48399370647915464956213 = __8084009132883873298763__ <br>
+* C1 = M1<sup>e</sup> mod modulo = 1262410606558359086381<sup>2237</sup> mod 48399370647915464956213 = __17004190389571278372483__ <br>
+* C2 = M2<sup>e</sup> mod modulo = 2109946103777344907375<sup>2237</sup> mod 48399370647915464956213 = __46911152036783136438187__ <br>
+* C3 = M3<sup>e</sup> mod modulo = 27749<sup>2237</sup> mod 48399370647915464956213 = __8084009132883873298763__ <br>
 
 Here, C3 has a length 22, less than 23. So a “0” is added before it. Finally
 * C = C1+C2+C3 = __170041903895712783724834691115203678313643818708084009132883873298763__ <br>
 
-C is convert to hexadecimal giving the ciphertext, here:
+C is convert to hexadecimal giving the ciphertext. Here:
  ```
  Ciphertext: 64EA4F894FB708BD613599C2821799381F581AAAEE8048DD9445AF94B
  ```
 
+---
+:unlock:Decryption
+---
+
+Decryption takes three parameters. Here, <p align = "center">
+Ciphertext: __64EA4F894FB708BD613599C2821799381F581AAAEE8048DD9445AF94B__ <br>
+	Modulo = __48399370647915464956213__ and e = __2237__ <br>
+</p>
+
+Inside decryption function, private_key file is opened giving p and q. Here, <p align = "center">
+p = __57704576143051__ and q = __838744063__
+  </p>
+  
+  Ciphertext is converted to decimal and phi is calculated. Here, <br>
+* C = __170041903895712783724834691115203678313643818708084009132883873298763__
+* phi = (p-1) × (q-1) = __48399370590210050069100__ <br>
+
+InvertModulo function takes e and phi and gives d such that e × d mod phi ≡ 1. Here, <p align = "center">
+ d = __10125572389905365861573__ 
+</p>
+
+From “modulo”, we got:<p align = "center">
+per_char = __9__ <br>
+cyln = __23__ <br>
+  </p>
+
+> Ciphertext length = 69 in decimal. If less than 69 (ciphertext length mod cyln != 0), add 0 before the ciphertext. 
+
+Divide ciphertext by 23 characters, gives 3 portion. Here, <p align = "center">
+ C1 = __17004190389571278372483__ <br>
+ C2 = __46911152036783136438187__ <br>
+ C3 = __08084009132883873298763__ <br>
+</p>
+
+Now, using PowerMod function, we get M1, M2 and M3 in integer. Here, 
+* M1 = C1<sup>d</sup> mod modulo = 17004190389571278372483<sup>10125572389905365861573</sup> 48399370647915464956213 = __1262410606558359086381__ <br>
+* M2 = C2<sup>d</sup> mod modulo = 46911152036783136438187<sup>10125572389905365861573</sup> 48399370647915464956213 = __2109946103777344907375__ <br>
+* M3 = C3<sup>d</sup> mod modulo = 08084009132883873298763<sup>10125572389905365861573</sup> 48399370647915464956213 = __27749__ <br>
+
+Then, each part is converted to string. Here, <p align = "center">
+M1 = 1262410606558359086381 = __Down the-__ <br>
+M2 = 2109946103777344907375 = __rabbit ho__ <br>
+M3 = 27749 = __le__ <br>
+  </p>
+  
+  > Convert to string, M1 = Numb = 1262410606558359086381. Temp = Numb%256 = 45. Temp To ASCII = ‘-’. Numb = Numb – temp = 1262410606558359086336. Numb = Numb ÷ 256 = 4931291431868590181. Similarly, we get total “-eht nwoD”. Reverse it we get “Down the-”
+  
+  Finally, M = M1+M2+M3 gives the message in plaintext. Here, 
+ ```
+ Plaintext = Down the-rabbit hole
+ ```
+
+
+:copyright:Sazzad-Saju <p align = "center">
+ END OF DOCUMENT :smile:
+</p>
